@@ -1,0 +1,16 @@
+[project]
+name = "harmonize"
+version = "1.0.0"
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+harmonize = "harmonize:main"
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests*"]
