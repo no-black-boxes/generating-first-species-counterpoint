@@ -152,3 +152,68 @@ def test_errors_on_non_alphabetic_pitch_class(dict_solution) -> None:
 
     with pytest.raises(ValueError):
         io.load_solution(dict_solution)
+
+
+@pytest.mark.parametrize(
+    "chord_str, root, intervals, inversion",
+    [
+        ("I", sol.PitchCls(0), sol.Intervals([4, 3]), 0),
+        ("V", sol.PitchCls(7), sol.Intervals([4, 3]), 0),
+        ("vi", sol.PitchCls(9), sol.Intervals([3, 4]), 0),
+        ("vii_dim", sol.PitchCls(11), sol.Intervals([3, 3]), 0),
+        ("IV6", sol.PitchCls(5), sol.Intervals([4, 3]), 1),
+        ("vii_dim64", sol.PitchCls(11), sol.Intervals([3, 3]), 2),
+        ("V7", sol.PitchCls(7), sol.Intervals([4, 3, 3]), 0),
+        ("V65", sol.PitchCls(7), sol.Intervals([4, 3, 3]), 1),
+        ("V43", sol.PitchCls(7), sol.Intervals([4, 3, 3]), 2),
+        ("V42", sol.PitchCls(7), sol.Intervals([4, 3, 3]), 3),
+        ("IVM7", sol.PitchCls(5), sol.Intervals([4, 3, 4]), 0),
+        ("vi7", sol.PitchCls(9), sol.Intervals([3, 4, 3]), 0),
+        ("vii_hdim7", sol.PitchCls(11), sol.Intervals([3, 3, 4]), 0),
+        ("vii_dim7", sol.PitchCls(11), sol.Intervals([3, 3, 3]), 0),
+        ("vii_dim65", sol.PitchCls(11), sol.Intervals([3, 3, 3]), 1),
+    ],
+)
+def test_reads_single_chord(
+    dict_solution, solution, chord_str, root, intervals, inversion
+) -> None:
+    dict_solution["chords"] = [chord_str]
+
+    solution.chords = [sol.Chord(root, intervals, inversion)]
+
+    parsed = io.load_solution(dict_solution)
+
+    assert solution == parsed
+
+
+@pytest.mark.parametrize(
+    "chord_str",
+    [
+        "viiii",
+        "Vi",
+        "I5",
+        "vii_hdim",
+        "VM",
+    ],
+)
+def test_errors_on_invalid_single_chord(dict_solution, chord_str) -> None:
+    dict_solution["chords"] = [chord_str]
+
+    with pytest.raises(ValueError):
+        io.load_solution(dict_solution)
+
+
+def test_reads_single_chord_in_different_key(dict_solution, solution) -> None:
+    dict_solution["key"] = {
+        "tonic": "D",
+        "type": "minor",
+    }
+
+    dict_solution["chords"] = ["V"]
+
+    solution.key = sol.Key(sol.PitchCls(2), sol.Intervals([2, 1, 2, 2, 1, 2]))
+    solution.chords = [sol.Chord(sol.PitchCls(9), sol.Intervals([4, 3]), 0)]
+
+    parsed = io.load_solution(dict_solution)
+
+    assert solution == parsed
