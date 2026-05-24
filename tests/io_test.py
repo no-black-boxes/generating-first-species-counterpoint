@@ -4,8 +4,9 @@ from harmonize import io
 from harmonize import solution as sol
 
 
-def test_reads_major_key() -> None:
-    solution = {
+@pytest.fixture
+def dict_solution() -> dict:
+    return {
         "key": {
             "tonic": "C",
             "type": "major",
@@ -13,7 +14,11 @@ def test_reads_major_key() -> None:
         "notes": [[], [], [], []],
         "chords": [],
     }
-    expected = sol.Solution(
+
+
+@pytest.fixture
+def solution() -> sol.Solution:
+    return sol.Solution(
         key=sol.Key(sol.PitchCls(0), sol.Intervals([2, 2, 1, 2, 2, 2])),
         voices={
             sol.Voice.SOPRANO: [],
@@ -24,60 +29,49 @@ def test_reads_major_key() -> None:
         chords=[],
     )
 
-    parsed = io.load_solution(solution)
 
-    assert expected == parsed
-
-
-def test_reads_minor_key() -> None:
-    solution = {
-        "key": {
-            "tonic": "F#/Gb",
-            "type": "minor",
-        },
-        "notes": [[], [], [], []],
-        "chords": [],
+def test_reads_major_key(dict_solution, solution) -> None:
+    dict_solution["key"] = {
+        "tonic": "C",
+        "type": "major",
     }
-    expected = sol.Solution(
-        key=sol.Key(sol.PitchCls(6), sol.Intervals([2, 1, 2, 2, 1, 2])),
-        voices={
-            sol.Voice.SOPRANO: [],
-            sol.Voice.ALTO: [],
-            sol.Voice.TENOR: [],
-            sol.Voice.BASS: [],
-        },
-        chords=[],
-    )
 
-    parsed = io.load_solution(solution)
+    solution.key = sol.Key(sol.PitchCls(0), sol.Intervals([2, 2, 1, 2, 2, 2]))
 
-    assert expected == parsed
+    parsed = io.load_solution(dict_solution)
+
+    assert solution == parsed
 
 
-def test_errors_on_invalid_pitch_class_in_key() -> None:
-    solution = {
-        "key": {
-            # Yes, it's enharmonically the same as C, but it's not supported.
-            "tonic": "B#",
-            "type": "minor",
-        },
-        "notes": [[], [], [], []],
-        "chords": [],
+def test_reads_minor_key(dict_solution, solution) -> None:
+    dict_solution["key"] = {
+        "tonic": "F#/Gb",
+        "type": "minor",
+    }
+
+    solution.key = sol.Key(sol.PitchCls(6), sol.Intervals([2, 1, 2, 2, 1, 2]))
+
+    parsed = io.load_solution(dict_solution)
+
+    assert solution == parsed
+
+
+def test_errors_on_invalid_pitch_class_in_key(dict_solution) -> None:
+    dict_solution["key"] = {
+        # Yes, it's enharmonically the same as C, but it's not supported.
+        "tonic": "B#",
+        "type": "minor",
     }
 
     with pytest.raises(ValueError):
-        io.load_solution(solution)
+        io.load_solution(dict_solution)
 
 
-def test_errors_on_invalid_key_type() -> None:
-    solution = {
-        "key": {
-            "tonic": "C",
-            "type": "Major",
-        },
-        "notes": [[], [], [], []],
-        "chords": [],
+def test_errors_on_invalid_key_type(dict_solution) -> None:
+    dict_solution["key"] = {
+        "tonic": "C",
+        "type": "Major",
     }
 
     with pytest.raises(ValueError):
-        io.load_solution(solution)
+        io.load_solution(dict_solution)
