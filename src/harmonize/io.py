@@ -1,3 +1,5 @@
+import re
+
 from harmonize import solution as sol
 
 
@@ -35,10 +37,7 @@ def _parse_key(key_data: dict) -> sol.Key:
         case _:
             raise ValueError(f"'{key_data['type']}' is not a supported key")
 
-    try:
-        pitch_cls = sol.PitchCls(_PITCH_CLASS_NAMES.index(key_data["tonic"]))
-    except ValueError:
-        raise ValueError(f"Pitch class {key_data['tonic']} not supported")
+    pitch_cls = sol.PitchCls(_pitch_class_int_from_str(key_data["tonic"]))
 
     return sol.Key(
         pitch_cls,
@@ -46,31 +45,33 @@ def _parse_key(key_data: dict) -> sol.Key:
     )
 
 
+def _pitch_class_int_from_str(str_cls: str) -> int:
+    try:
+        return _PITCH_CLASS_NAMES.index(str_cls)
+    except ValueError:
+        raise ValueError(f"Pitch class {str_cls} not supported")
+
+
 def _parse_voices(voices_data: list[list]) -> dict[sol.Voice, list]:
-    return {
-        sol.Voice.SOPRANO: [],
-        sol.Voice.ALTO: [],
-        sol.Voice.TENOR: [],
-        sol.Voice.BASS: [],
-    }
-    # voices = []
+    voices = {}
 
-    # for index, notes in enumerate(voices_data):
-    #    voices[sol.Voice(index)] = _parse_notes(notes)
+    for index, notes in enumerate(voices_data):
+        voices[sol.Voice(index)] = list(map(_parse_note, notes))
 
-    # return voices
-
-
-def _parse_notes(notes_data: list[str]) -> list[sol.Note]:
-    return map(_parse_note, notes_data)
+    return voices
 
 
 def _parse_note(note: str) -> sol.Note:
-    return sol.Note(
-        sol.PitchCls(note[0]),
-        sol.Accidental(note[1:-1]),
-        int(note[-1]),
-    )
+    re_match = re.match(r"^[A-Z]#/[A-Z]b|^[A-Z]", note)
+
+    if re_match is None:
+        raise ValueError(f"{note} is not a valid note")
+
+    pitch_cls_int = _pitch_class_int_from_str(re_match[0])
+    octave = int(note[len(re_match[0]) :])
+
+    # 12 is C0.
+    return sol.Note(pitch_cls_int + octave * 12 + 12)
 
 
 def _parse_chords(chord_data: list[str]) -> list[sol.Chord]:
