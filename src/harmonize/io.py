@@ -43,6 +43,10 @@ _INVERSION_SYMBOLS = {
 
 def load_solution(data: dict) -> sol.Solution:
     """Loads a solution from JSON data."""
+
+    if "key" not in data or "notes" not in data or "chords" not in data:
+        raise ValueError("Solution must have 'key', 'notes', and 'chords' keys")
+
     key = _parse_key(data["key"])
     voices = _parse_voices(data["notes"])
     chords = list(map(lambda chord: _parse_chord(key, chord), data["chords"]))
@@ -51,6 +55,9 @@ def load_solution(data: dict) -> sol.Solution:
 
 
 def _parse_key(key_data: dict) -> sol.Key:
+    if "tonic" not in key_data or "type" not in key_data:
+        raise ValueError("Key must have 'tonic' and 'type' keys")
+
     match key_data["type"]:
         case "major":
             intervals = sol.Intervals([2, 2, 1, 2, 2, 2])
@@ -76,6 +83,9 @@ def _pitch_class_int_from_str(str_cls: str) -> int:
 
 def _parse_voices(voices_data: list[list]) -> dict[sol.Voice, list]:
     voices = {}
+
+    if not len(voices_data) == 4:
+        raise ValueError("Solution must have four voices")
 
     for index, notes in enumerate(voices_data):
         voices[sol.Voice(index)] = list(map(_parse_note, notes))

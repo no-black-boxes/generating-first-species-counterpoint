@@ -217,3 +217,67 @@ def test_reads_single_chord_in_different_key(dict_solution, solution) -> None:
     parsed = io.load_solution(dict_solution)
 
     assert solution == parsed
+
+
+def test_errors_when_missing_key() -> None:
+    dict_solution = {
+        "notes": [[], [], [], []],
+        "chords": [],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(dict_solution)
+
+
+def test_errors_when_missing_notes() -> None:
+    dict_solution = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
+        "chords": [],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(dict_solution)
+
+
+def test_errors_when_missing_chords() -> None:
+    dict_solution = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
+        "notes": [[], [], [], []],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(dict_solution)
+
+
+def test_errors_when_malformed_key() -> None:
+    dict_solution = {
+        "key": {
+            "root": "C",
+            "type": "major",
+        },
+        "notes": [[], [], [], []],
+        "chords": [],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(dict_solution)
+
+
+def test_errors_when_wrong_voice_count() -> None:
+    dict_solution = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
+        "notes": [[], [], []],
+        "chords": [],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(dict_solution)
