@@ -49,6 +49,21 @@ def test_loads_multiple_pitches():
     assert expected_counter_melody == solution.counter_melody
 
 
+def test_loads_extreme_pitches():
+    sol_input = {
+        "melody": ["G9"],
+        "counterMelody": ["C-1"],
+    }
+
+    expected_melody = [127]
+    expected_counter_melody = [0]
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_melody == solution.melody
+    assert expected_counter_melody == solution.counter_melody
+
+
 def test_error_on_invalid_pitch():
     sol_input = {
         "melody": ["H5"],
@@ -73,6 +88,26 @@ def test_error_on_unknown_in_melody():
     sol_input = {
         "melody": ["X"],
         "counterMelody": ["C3"],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(sol_input)
+
+
+def test_error_on_too_low_pitch():
+    sol_input = {
+        "melody": ["B-2"],
+        "counterMelody": ["X"],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(sol_input)
+
+
+def test_error_on_too_high_pitch():
+    sol_input = {
+        "melody": ["G#/Ab9"],
+        "counterMelody": ["X"],
     }
 
     with pytest.raises(ValueError):
