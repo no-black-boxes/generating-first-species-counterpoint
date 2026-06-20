@@ -1,0 +1,12 @@
+{
+  "key": {
+    "tonic": "C",
+    "type": "major"
+  },
+  "melody": [
+    "C5", "D5", "E5", "F5", "A5", "D5", "F5", "B4", "C4"
+  ],
+  "counterMelody": [
+    "C4", "X", "X", "X", "X", "X", "X", "X", "C4"
+  ]
+}
