@@ -10,11 +10,11 @@ from harmonize.solution import Solution
 def _parse_args() -> tuple[Path, Path]:
     parser = ArgumentParser(
         prog="harmonize",
-        description="Generates four-part harmony using constraints",
+        description="Generates first-species counterpoint",
     )
 
-    parser.add_argument("input", help="JSON file with initial conditions")
-    parser.add_argument("output", help="JSON file for the solution")
+    parser.add_argument("input", help="JSON file with the melody and constraints")
+    parser.add_argument("output", help="JSON output file for the solution")
 
     args = parser.parse_args()
 
@@ -47,4 +47,5 @@ def main() -> None:
     solution = _read_initial_solution(in_path)
 
     print(f"Output path: {out_path}")
-    print(f"Initial solution:\n{solution}")
+    print(f"Melody: {solution.melody}")
+    print(f"Counter-melody: {solution.counter_melody}")
