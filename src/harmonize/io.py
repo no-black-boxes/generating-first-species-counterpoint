@@ -50,7 +50,7 @@ def _parse_voice(voice: list[str]) -> list[int]:
             notes.append(sol.UNKNOWN_NOTE)
             continue
 
-        note_match = re.match(r"([A-G]#/[A-G]b|[A-G])(\d)", note_str)
+        note_match = re.match(r"([A-G]#/[A-G]b|[A-G])(-?\d)", note_str)
 
         if note_match is None:
             raise ValueError(f"{note_str} is not a valid note")
@@ -58,7 +58,15 @@ def _parse_voice(voice: list[str]) -> list[int]:
         pitch_class = _PITCH_CLASS_NAMES.index(note_match[1])
         octave = int(note_match[2])
 
-        notes.append(octave * 12 + pitch_class + 12)
+        note = octave * 12 + pitch_class + 12
+
+        if note < 0 or note > 127:
+            raise ValueError(
+                f"Only MIDI pitches 0-127 are supported, {note_str} ({note}) "
+                "is outside that range"
+            )
+
+        notes.append(note)
 
     return notes
 
