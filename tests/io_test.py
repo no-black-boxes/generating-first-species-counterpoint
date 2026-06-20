@@ -42,7 +42,7 @@ def test_loads_multiple_pitches():
 
     expected_melody = [60, 67, 65, 72]
     expected_counter_melody = [48, 47, 55, 60]
-    
+
     solution = io.load_solution(sol_input)
 
     assert expected_melody == solution.melody
@@ -54,7 +54,7 @@ def test_error_on_invalid_pitch():
         "melody": ["H5"],
         "counterMelody": ["C3"],
     }
-    
+
     with pytest.raises(ValueError):
         io.load_solution(sol_input)
 
@@ -64,7 +64,7 @@ def test_error_on_length_difference():
         "melody": ["C4", "D4"],
         "counterMelody": ["C3"],
     }
-    
+
     with pytest.raises(ValueError):
         io.load_solution(sol_input)
 
@@ -74,6 +74,42 @@ def test_error_on_unknown_in_melody():
         "melody": ["X"],
         "counterMelody": ["C3"],
     }
-    
+
     with pytest.raises(ValueError):
         io.load_solution(sol_input)
+
+
+def test_dumps_pitch():
+    solution = sol.Solution([60], [80])
+
+    expected_melody = ["C4"]
+    expected_counter_melody = ["G#/Ab5"]
+
+    result = io.dump_solution(solution)
+
+    assert expected_melody == result["melody"]
+    assert expected_counter_melody == result["counterMelody"]
+
+
+def test_dumps_unknown():
+    solution = sol.Solution([60], [sol.UNKNOWN_NOTE])
+
+    expected_melody = ["C4"]
+    expected_counter_melody = ["X"]
+
+    result = io.dump_solution(solution)
+
+    assert expected_melody == result["melody"]
+    assert expected_counter_melody == result["counterMelody"]
+
+
+def test_dumps_multiple_pitches():
+    solution = sol.Solution([60, 67, 65, 72], [48, 47, 55, 60])
+
+    expected_melody = ["C4", "G4", "F4", "C5"]
+    expected_counter_melody = ["C3", "B2", "G3", "C4"]
+
+    result = io.dump_solution(solution)
+
+    assert expected_melody == result["melody"]
+    assert expected_counter_melody == result["counterMelody"]

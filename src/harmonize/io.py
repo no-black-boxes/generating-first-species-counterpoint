@@ -30,6 +30,18 @@ def load_solution(data: dict) -> sol.Solution:
     return sol.Solution(melody, counter_melody)
 
 
+def dump_solution(solution: sol.Solution) -> dict:
+    """Dumps a solution to JSON data."""
+
+    melody = _dump_voice(solution.melody)
+    counter_melody = _dump_voice(solution.counter_melody)
+
+    return {
+        "melody": melody,
+        "counterMelody": counter_melody,
+    }
+
+
 def _parse_voice(voice: list[str]) -> list[int]:
     notes = []
 
@@ -47,5 +59,21 @@ def _parse_voice(voice: list[str]) -> list[int]:
         octave = int(note_match[2])
 
         notes.append(octave * 12 + pitch_class + 12)
+
+    return notes
+
+
+def _dump_voice(voice: list[int]) -> list[str]:
+    notes = []
+
+    for note in voice:
+        if note == sol.UNKNOWN_NOTE:
+            notes.append(_UNKNOWN_NAME)
+            continue
+
+        pitch_class = note % 12
+        octave = note // 12 - 1
+
+        notes.append(f"{_PITCH_CLASS_NAMES[pitch_class]}{octave}")
 
     return notes
