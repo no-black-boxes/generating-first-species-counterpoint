@@ -41,11 +41,16 @@ def _read_initial_solution(path: Path) -> Solution:
     return solution
 
 
+def _dump_solution_to_output(solution: Solution, path: Path) -> None:
+    solution_dict = io.dump_solution(solution)
+
+    with open(path, "w") as file:
+        json.dump(solution_dict, file, indent=2)
+
+
 def main() -> None:
     in_path, out_path = _parse_args()
 
     solution = _read_initial_solution(in_path)
 
-    print(f"Output path: {out_path}")
-    print(f"Melody: {solution.melody}")
-    print(f"Counter-melody: {solution.counter_melody}")
+    _dump_solution_to_output(solution, out_path)
