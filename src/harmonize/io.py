@@ -60,7 +60,7 @@ def _parse_voice(voice: list[str]) -> list[int]:
 
         note = octave * 12 + pitch_class + 12
 
-        if note < 0 or note > 127:
+        if note < sol.MIN_NOTE or note > sol.MAX_NOTE:
             raise ValueError(
                 f"Only MIDI pitches 0-127 are supported, {note_str} ({note}) "
                 "is outside that range"

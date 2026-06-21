@@ -5,6 +5,7 @@ import sys
 
 from harmonize import io
 from harmonize.solution import Solution
+from harmonize.solver import Solver
 
 
 def _parse_args() -> tuple[Path, Path]:
@@ -51,6 +52,9 @@ def _dump_solution_to_output(solution: Solution, path: Path) -> None:
 def main() -> None:
     in_path, out_path = _parse_args()
 
-    solution = _read_initial_solution(in_path)
+    in_solution = _read_initial_solution(in_path)
 
-    _dump_solution_to_output(solution, out_path)
+    solver = Solver()
+    out_solution = solver.solve(in_solution)
+
+    _dump_solution_to_output(out_solution, out_path)
