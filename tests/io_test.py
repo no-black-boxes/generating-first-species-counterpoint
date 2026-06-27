@@ -80,6 +80,57 @@ def test_loads_extreme_pitches():
     assert expected_counter_melody == solution.counter_melody
 
 
+def test_loads_key():
+    sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
+        "melody": ["C4"],
+        "counterMelody": ["C3"],
+    }
+
+    expected_key = {0, 2, 4, 5, 7, 9, 11}
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_key == solution.key
+
+
+def test_loads_key_with_non_c_tonic():
+    sol_input = {
+        "key": {
+            "tonic": "A#/Bb",
+            "type": "major",
+        },
+        "melody": ["A#/Bb4"],
+        "counterMelody": ["A#/Bb3"],
+    }
+
+    expected_key = {0, 2, 3, 5, 7, 9, 10}
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_key == solution.key
+
+
+def test_loads_minor_key():
+    sol_input = {
+        "key": {
+            "tonic": "G",
+            "type": "minor",
+        },
+        "melody": ["G4"],
+        "counterMelody": ["G3"],
+    }
+
+    expected_key = {0, 2, 3, 6, 7, 9, 10}
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_key == solution.key
+
+
 def test_error_on_invalid_pitch():
     sol_input = {
         "key": {

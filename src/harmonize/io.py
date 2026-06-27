@@ -20,13 +20,19 @@ _PITCH_CLASS_NAMES = [
 
 _UNKNOWN_NAME = "X"
 
+_KEY_OFFSETS = {
+    "major": {0, 2, 4, 5, 7, 9, 11},
+    # Harmonic minor
+    "minor": {0, 2, 3, 5, 7, 8, 11},
+}
+
 
 def load_solution(data: dict) -> sol.Solution:
     """Loads a solution from JSON data."""
 
     melody = _parse_voice(data["melody"])
     counter_melody = _parse_voice(data["counterMelody"])
-    key = set()
+    key = _parse_key(data["key"])
 
     return sol.Solution(melody, counter_melody, key)
 
@@ -70,6 +76,13 @@ def _parse_voice(voice: list[str]) -> list[int]:
         notes.append(note)
 
     return notes
+
+
+def _parse_key(key: dict) -> set[int]:
+    offsets = _KEY_OFFSETS[key["type"]]
+    tonic = _PITCH_CLASS_NAMES.index(key["tonic"])
+
+    return {(tonic + offset) % 12 for offset in offsets}
 
 
 def _dump_voice(voice: list[int]) -> list[str]:
