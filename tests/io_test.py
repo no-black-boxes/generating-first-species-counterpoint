@@ -201,6 +201,34 @@ def test_error_on_too_high_pitch():
         io.load_solution(sol_input)
 
 
+def test_error_on_invalid_key_tonic():
+    sol_input = {
+        "key": {
+            "tonic": "H",
+            "type": "major",
+        },
+        "melody": ["C4"],
+        "counterMelody": ["C3"],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(sol_input)
+
+
+def test_error_on_invalid_key_type():
+    sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "turtle",
+        },
+        "melody": ["C4"],
+        "counterMelody": ["C3"],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(sol_input)
+
+
 def test_dumps_pitch():
     solution = sol.Solution([60], [80], set())
 

@@ -79,8 +79,15 @@ def _parse_voice(voice: list[str]) -> list[int]:
 
 
 def _parse_key(key: dict) -> set[int]:
-    offsets = _KEY_OFFSETS[key["type"]]
-    tonic = _PITCH_CLASS_NAMES.index(key["tonic"])
+    try:
+        offsets = _KEY_OFFSETS[key["type"]]
+    except KeyError:
+        raise ValueError(f"{key['type']} is not a valid key type")
+
+    try:
+        tonic = _PITCH_CLASS_NAMES.index(key["tonic"])
+    except ValueError:
+        raise ValueError(f"{key['tonic']} is not a valid pitch class")
 
     return {(tonic + offset) % 12 for offset in offsets}
 
