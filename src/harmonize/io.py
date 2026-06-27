@@ -26,8 +26,9 @@ def load_solution(data: dict) -> sol.Solution:
 
     melody = _parse_voice(data["melody"])
     counter_melody = _parse_voice(data["counterMelody"])
+    key = set()
 
-    return sol.Solution(melody, counter_melody)
+    return sol.Solution(melody, counter_melody, key)
 
 
 def dump_solution(solution: sol.Solution) -> dict:

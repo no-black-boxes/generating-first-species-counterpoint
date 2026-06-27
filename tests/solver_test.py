@@ -16,6 +16,7 @@ def input_solution() -> dict:
             sol.UNKNOWN_NOTE,
             48,
         ],
+        set(),
     )
 
 

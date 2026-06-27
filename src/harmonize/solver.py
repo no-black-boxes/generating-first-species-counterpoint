@@ -11,4 +11,4 @@ class Solver:
             if counter_melody[i] == sol.UNKNOWN_NOTE:
                 counter_melody[i] = random.randrange(sol.MIN_NOTE, sol.MAX_NOTE)
 
-        return sol.Solution(in_solution.melody, counter_melody)
+        return sol.Solution(in_solution.melody, counter_melody, in_solution.key)
