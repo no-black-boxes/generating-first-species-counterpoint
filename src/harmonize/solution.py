@@ -4,7 +4,7 @@ MAX_NOTE = 127
 
 
 class Solution:
-    def __init__(self, melody: list[int], counter_melody: list[int]):
+    def __init__(self, melody: list[int], counter_melody: list[int], key: set[int]):
         if len(melody) != len(counter_melody):
             raise ValueError("Melody and counter-melody must have the same length")
 
@@ -24,3 +24,4 @@ class Solution:
 
         self.melody = melody
         self.counter_melody = counter_melody
+        self.key = key

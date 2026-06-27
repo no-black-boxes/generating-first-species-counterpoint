@@ -16,6 +16,7 @@ def input_solution() -> dict:
             sol.UNKNOWN_NOTE,
             48,
         ],
+        {0, 2, 4, 5, 7, 9, 11},
     )
 
 
@@ -46,3 +47,12 @@ def test_creates_counter_melody_without_unknowns(input_solution) -> None:
 
     for note in output_solution.counter_melody:
         assert note != sol.UNKNOWN_NOTE
+
+
+def test_creates_counter_melody_in_key(input_solution) -> None:
+    solver = Solver()
+
+    output_solution = solver.solve(input_solution)
+
+    for note in output_solution.counter_melody:
+        assert (note % 12) in input_solution.key

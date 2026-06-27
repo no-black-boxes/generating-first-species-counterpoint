@@ -6,6 +6,10 @@ from harmonize import solution as sol
 
 def test_loads_midi_pitch_from_note_name():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["C4"],
         "counterMelody": ["G#/Ab5"],
     }
@@ -21,6 +25,10 @@ def test_loads_midi_pitch_from_note_name():
 
 def test_loads_unknown_pitch():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["C4"],
         "counterMelody": ["X"],
     }
@@ -36,6 +44,10 @@ def test_loads_unknown_pitch():
 
 def test_loads_multiple_pitches():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["C4", "G4", "F4", "C5"],
         "counterMelody": ["C3", "B2", "G3", "C4"],
     }
@@ -51,6 +63,10 @@ def test_loads_multiple_pitches():
 
 def test_loads_extreme_pitches():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["G9"],
         "counterMelody": ["C-1"],
     }
@@ -64,8 +80,63 @@ def test_loads_extreme_pitches():
     assert expected_counter_melody == solution.counter_melody
 
 
+def test_loads_key():
+    sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
+        "melody": ["C4"],
+        "counterMelody": ["C3"],
+    }
+
+    expected_key = {0, 2, 4, 5, 7, 9, 11}
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_key == solution.key
+
+
+def test_loads_key_with_non_c_tonic():
+    sol_input = {
+        "key": {
+            "tonic": "A#/Bb",
+            "type": "major",
+        },
+        "melody": ["A#/Bb4"],
+        "counterMelody": ["A#/Bb3"],
+    }
+
+    expected_key = {0, 2, 3, 5, 7, 9, 10}
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_key == solution.key
+
+
+def test_loads_minor_key():
+    sol_input = {
+        "key": {
+            "tonic": "G",
+            "type": "minor",
+        },
+        "melody": ["G4"],
+        "counterMelody": ["G3"],
+    }
+
+    expected_key = {0, 2, 3, 6, 7, 9, 10}
+
+    solution = io.load_solution(sol_input)
+
+    assert expected_key == solution.key
+
+
 def test_error_on_invalid_pitch():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["H5"],
         "counterMelody": ["C3"],
     }
@@ -76,6 +147,10 @@ def test_error_on_invalid_pitch():
 
 def test_error_on_length_difference():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["C4", "D4"],
         "counterMelody": ["C3"],
     }
@@ -86,6 +161,10 @@ def test_error_on_length_difference():
 
 def test_error_on_unknown_in_melody():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["X"],
         "counterMelody": ["C3"],
     }
@@ -96,6 +175,10 @@ def test_error_on_unknown_in_melody():
 
 def test_error_on_too_low_pitch():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["B-2"],
         "counterMelody": ["X"],
     }
@@ -106,6 +189,10 @@ def test_error_on_too_low_pitch():
 
 def test_error_on_too_high_pitch():
     sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "major",
+        },
         "melody": ["G#/Ab9"],
         "counterMelody": ["X"],
     }
@@ -114,8 +201,36 @@ def test_error_on_too_high_pitch():
         io.load_solution(sol_input)
 
 
+def test_error_on_invalid_key_tonic():
+    sol_input = {
+        "key": {
+            "tonic": "H",
+            "type": "major",
+        },
+        "melody": ["C4"],
+        "counterMelody": ["C3"],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(sol_input)
+
+
+def test_error_on_invalid_key_type():
+    sol_input = {
+        "key": {
+            "tonic": "C",
+            "type": "turtle",
+        },
+        "melody": ["C4"],
+        "counterMelody": ["C3"],
+    }
+
+    with pytest.raises(ValueError):
+        io.load_solution(sol_input)
+
+
 def test_dumps_pitch():
-    solution = sol.Solution([60], [80])
+    solution = sol.Solution([60], [80], set())
 
     expected_melody = ["C4"]
     expected_counter_melody = ["G#/Ab5"]
@@ -127,7 +242,7 @@ def test_dumps_pitch():
 
 
 def test_dumps_unknown():
-    solution = sol.Solution([60], [sol.UNKNOWN_NOTE])
+    solution = sol.Solution([60], [sol.UNKNOWN_NOTE], set())
 
     expected_melody = ["C4"]
     expected_counter_melody = ["X"]
@@ -139,7 +254,7 @@ def test_dumps_unknown():
 
 
 def test_dumps_multiple_pitches():
-    solution = sol.Solution([60, 67, 65, 72], [48, 47, 55, 60])
+    solution = sol.Solution([60, 67, 65, 72], [48, 47, 55, 60], set())
 
     expected_melody = ["C4", "G4", "F4", "C5"]
     expected_counter_melody = ["C3", "B2", "G3", "C4"]
